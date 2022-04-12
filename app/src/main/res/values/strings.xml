@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">New Unscramble App</string>
+    <string name="app_name">Unscramble the Scrambled</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -20,7 +20,7 @@ class GameFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-       binding= DataBindingUtil.inflate(inflater, R.layout.fragment_game,container,false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_game, container, false)
         // binding = FragmentGameBinding.inflate(inflater, container, false)
         // Inflate the layout for this fragment
         return binding.root
@@ -29,22 +29,26 @@ class GameFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.viewModel=myViewModel
+        binding.viewModel = myViewModel
 
-       // updateUi()
+        // updateUi()
 
-        binding.lifecycleOwner=viewLifecycleOwner
+        myViewModel.queNumbering.observe(viewLifecycleOwner) {
+            if (it == 10) {
+                showDialogOnCompetionOfGame()
+            }
+        }
+
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.submit.setOnClickListener {
             val userInputText = binding.editText.text.toString()
             binding.editText.text?.clear()
             if (userInputText == myViewModel.currentWord) {
-                binding.textInputLayout.isErrorEnabled=false
+                binding.textInputLayout.isErrorEnabled = false
                 myViewModel.increaseScoreAndQuenum()
                 nextScrambledWord()
-               // updateUi()
-                if (myViewModel.queNumbering.value == 11) {
-                    showDialogOnCompetionOfGame()
-                }
+                // updateUi()
+
             } else {
                 binding.textInputLayout.isErrorEnabled = true
                 binding.textInputLayout.error = "Try Again"
@@ -52,31 +56,34 @@ class GameFragment : Fragment() {
         }
         binding.skip.setOnClickListener {
             nextScrambledWord()
+            myViewModel._queNumbering.value = myViewModel._queNumbering.value?.inc()
             binding.editText.text?.clear()
-            binding.textInputLayout.isErrorEnabled=false
+            binding.textInputLayout.isErrorEnabled = false
             // livedata used-  binding.scrambleText.text = myViewModel.currentScrambledWord.value
         }
+        binding.btnLeaveGame.setOnClickListener { showDialogOnCompetionOfGame() }
+        binding.btnRestartGame.setOnClickListener { restartGame() }
 
-     /*   //observers
-        myViewModel.score.observe(
-            viewLifecycleOwner,
-            { newScore -> binding.score.text = newScore.toString() })
-        myViewModel.currentScrambledWord.observe(
-            viewLifecycleOwner,
-            { newCurScWord -> binding.scrambleText.text = newCurScWord })
-        myViewModel.queNumbering.observe(
-            viewLifecycleOwner,
-            { newVal -> binding.queNumber.text = newVal.toString() })
+        /*   //observers
+           myViewModel.score.observe(
+               viewLifecycleOwner,
+               { newScore -> binding.score.text = newScore.toString() })
+           myViewModel.currentScrambledWord.observe(
+               viewLifecycleOwner,
+               { newCurScWord -> binding.scrambleText.text = newCurScWord })
+           myViewModel.queNumbering.observe(
+               viewLifecycleOwner,
+               { newVal -> binding.queNumber.text = newVal.toString() })
 
-      */
+         */
     }
 
     private fun showDialogOnCompetionOfGame() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Game Complete")
-            .setMessage("Your score is " + myViewModel.score)
+            .setMessage("Your score is " + myViewModel.score.value +"out of 100")
             .setNegativeButton("Exit") { _, _ -> activity?.finish() }
-            .setPositiveButton("Restart") { _, _ -> restartGame() }
+            .setPositiveButton("Restart") { _, _ -> restartGame() }.show()
     }
 
     private fun nextScrambledWord() {
@@ -89,7 +96,7 @@ class GameFragment : Fragment() {
 
         myViewModel.selectAword()
         myViewModel.scrambleTheWord()
-       // updateUi()
+        // updateUi()
     }
 
     private fun restartGame() {

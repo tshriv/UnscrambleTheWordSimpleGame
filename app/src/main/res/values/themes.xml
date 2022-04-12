@@ -13,4 +13,9 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+    <style name="btn_style">
+        <item name="colorPrimary">@color/yellow_2</item>
+        <item name="colorPrimaryVariant">@color/yellow_main</item>
+        <item name="android:background">@color/yellow_main</item>
+    </style>
 </resources>
